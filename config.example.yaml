@@ -1,0 +1,34 @@
+timezone: Europe/London
+min_gap_minutes: 90        # never post two clips closer than this, on any network
+horizon_days: 7
+
+source:
+  kind: gdrive             # or: local
+  folder_id: ${DRIVE_FOLDER_ID}
+  # path: ./clips          # for kind: local
+
+processing:
+  target_width: 1080
+  target_height: 1920
+  max_duration: 59
+  loudness_lufs: -14
+  blur_background: true
+  output_dir: out
+
+captions:
+  provider: anthropic      # anthropic | openai | template
+  model: claude-sonnet-4-5
+  voice: "confident, funny, short sentences, UK slang ok, no cringe"
+  max_hashtags: 5
+
+networks:
+  tiktok:
+    posts_per_day: 2
+    windows: ["12:00-13:30", "18:00-21:30"]
+  youtube:
+    posts_per_day: 1
+    windows: ["17:00-20:00"]
+    max_caption: 100
+  instagram:
+    posts_per_day: 1
+    windows: ["19:00-21:00"]

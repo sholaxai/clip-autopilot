@@ -1,0 +1,30 @@
+name: daily-run
+on:
+  schedule:
+    - cron: "17 10 * * *"   # once a day, plans the next week of slots
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install .
+      - uses: actions/cache@v4
+        with:
+          path: .clip-autopilot.db
+          key: state-${{ github.run_id }}
+          restore-keys: state-
+      - run: cp config.example.yaml config.yaml && clip-autopilot run -c config.yaml
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_ACCESS_TOKEN: ${{ secrets.GOOGLE_ACCESS_TOKEN }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+          METRICOOL_USER_ID: ${{ secrets.METRICOOL_USER_ID }}
+          METRICOOL_BLOG_ID: ${{ secrets.METRICOOL_BLOG_ID }}
+          METRICOOL_TOKEN: ${{ secrets.METRICOOL_TOKEN }}
+          MEDIA_BASE_URL: ${{ secrets.MEDIA_BASE_URL }}
